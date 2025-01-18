@@ -16,24 +16,20 @@ class _LoginScreenState extends State<LoginScreen> {
   void _submitForm() async {
     if (_formKey.currentState?.validate() ?? false) {
       _formKey.currentState?.save();
-      setState(() {
-        _isLoading = true;
-      });
+      setState(() => _isLoading = true);
 
       try {
         final user = await _authService.login(_email!, _password!);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Bienvenue, ${user['username']}!")),
         );
-        Navigator.pushNamed(context, '/uploader'); // Aller à la page principale
+        Navigator.pushNamed(context, '/uploader', arguments: user);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Erreur : ${e.toString()}")),
+          SnackBar(content: Text(e.toString())),
         );
       } finally {
-        setState(() {
-          _isLoading = false;
-        });
+        setState(() => _isLoading = false);
       }
     }
   }
@@ -41,9 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Connexion"),
-      ),
+      appBar: AppBar(title: Text("Connexion")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -53,24 +47,16 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               TextFormField(
                 decoration: InputDecoration(labelText: "Email"),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Veuillez entrer une adresse e-mail.";
-                  }
-                  return null;
-                },
+                validator: (value) =>
+                    value == null || value.isEmpty ? "Veuillez entrer une adresse e-mail valide." : null,
                 onSaved: (value) => _email = value,
               ),
               const SizedBox(height: 20),
               TextFormField(
                 decoration: InputDecoration(labelText: "Mot de passe"),
                 obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty || value.length < 6) {
-                    return "Le mot de passe doit contenir au moins 6 caractères.";
-                  }
-                  return null;
-                },
+                validator: (value) =>
+                    value == null ? "Le mot de passe doit contenir au moins 6 caractères." : null,
                 onSaved: (value) => _password = value,
               ),
               const SizedBox(height: 20),

@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../models/user.dart';
 
 class AuthService {
-  final String baseUrl = "http://10.0.2.2:8080/api/v1/user";
+  final String baseUrl = "http://10.0.2.2:8080/user";
 
-  // Fonction d'inscription
+  // Inscription
   Future<void> register(String username, String email, String password) async {
     final url = Uri.parse('$baseUrl/register');
     final response = await http.post(
@@ -17,34 +18,28 @@ class AuthService {
       }),
     );
 
-    if (response.statusCode == 200) {
-      print("Inscription réussie");
-    } else {
+    if (response.statusCode != 200) {
       throw Exception("Erreur d'inscription : ${response.body}");
     }
   }
 
-  // Fonction de connexion
+  // Connexion
   Future<Map<String, dynamic>> login(String email, String password) async {
     final url = Uri.parse('$baseUrl/login');
     final response = await http.post(
       url,
       headers: {"Content-Type": "application/x-www-form-urlencoded"},
-      body: {
-        "email": email,
-        "password": password,
-      },
+      body: {"email": email, "password": password},
     );
 
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return data;
+      return jsonDecode(response.body); // Renvoie les données utilisateur
     } else {
       throw Exception("Erreur de connexion : ${response.body}");
     }
   }
 
-  // Fonction de déconnexion
+  // Déconnexion
   Future<void> logout(String email) async {
     final url = Uri.parse('$baseUrl/logout');
     final response = await http.post(

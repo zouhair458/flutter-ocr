@@ -10,14 +10,17 @@ class ImageUploaderApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       initialRoute: '/',
       routes: {
         '/': (context) => LoginScreen(),
         '/register': (context) => RegisterScreen(),
-        '/uploader': (context) => LocalImageUploader(),
+        '/uploader': (context) => LocalImageUploader(
+              onLogout: () {
+                // Redirection vers la page de connexion lors de la déconnexion
+                Navigator.pushReplacementNamed(context, '/');
+              },
+            ),
       },
     );
   }
